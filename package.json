@@ -1,0 +1,40 @@
+{
+  "name": "d3-slide-maker",
+  "version": "0.0.0",
+  "description": "make slides in d3",
+  "main": "lib/app.js",
+  "scripts": {
+    "bundle": "browserify --debug lib/app.js > build/bundle.js",
+    "watch": "watchify --debug lib/app.js -o build/bundle.js",
+    "test": "jest"
+  },
+  "author": "Chris Westra",
+  "license": "ISC",
+  "dependencies": {
+    "browserify": "^8.1.1",
+    "d3": "^3.5.5",
+    "flux": "^2.0.1",
+    "immutable": "^3.6.2",
+    "react": "^0.12.2",
+    "react-router": "^0.11.6"
+  },
+  "devDependencies": {
+    "reactify": "^1.0.0",
+    "watchify": "^2.3.0"
+  },
+  "jest": {
+    "rootDir": "./lib"
+  },
+  "browserify": {
+    "debug": true,
+    "transform": [
+      [
+        "reactify",
+        {
+          "es6": true
+        }
+      ]
+    ]
+  }
+
+}
