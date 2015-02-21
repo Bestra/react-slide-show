@@ -1,52 +1,39 @@
 'use strict';
 
 var React = require('react'),
+rHelper = require('../d3-helpers/rect'),
+{ Link, State } = require('react-router'),
+d3 = require('d3'),
 Components = require('../components/Components.jsx'),
 Slides = require('../slide-store'),
-d3 = require('d3'),
-{ Link, State } = require('react-router'),
 
 Presentation = React.createClass({
   mixins: [State],
 
-  getSlides() {
-    return Slides.getContent(this.getParams().slideId);
+  getSlide() {
+    return Slides.getContent(this.getParams().slideId).toJS();
   },
   componentDidMount() {
     var svg = d3.select(this.refs.svg.getDOMNode());
     svg.selectAll("rect")
-       .data(this.getSlides())
+       .data(this.getSlide())
        .enter()
        .append("rect")
-       .attr("x", d => d.props.x)
-       .attr("y", d => d.props.y)
-       .attr("width", d => d.props.width)
-       .attr("height", d => d.props.height)
-       .attr("fill", d => d.props.fill)
-       .attr("stroke", d => d.props.stroke)
-       .attr("key", d => d.props.key)
-       .attr("stroke-width", d => d.props.strokeWidth)
+       .attr(rHelper.attrsForAppend)
   },
   componentWillReceiveProps() {
     var sel = d3.select(this.refs.svg.getDOMNode())
                 .selectAll("rect")
-                .data(this.getSlides());
+                .data(this.getSlide());
+
     sel.exit().transition().style('opacity', 0.001).remove();
+
     sel.enter()
        .append("rect")
-       .attr("x", d => d.props.x)
-       .attr("y", d => d.props.y)
-       .attr("width", d => d.props.width)
-       .attr("height", d => d.props.height)
-       .attr("fill", d => d.props.fill)
-       .attr("stroke", d => d.props.stroke)
-       .attr("key", d => d.props.key)
-       .attr("stroke-width", d => d.props.strokeWidth);
+       .attr(rHelper.attrsForAppend)
+
     sel.transition()
-       .attr("x", d => d.props.x)
-       .attr("y", d => d.props.y)
-       .attr("fill", d => d.props.fill)
-       .attr("stroke", d => d.props.stroke)
+       .attr(rHelper.attrsForTransition)
   },
   render() {
     var slideId = parseInt(this.getParams().slideId),
@@ -57,8 +44,10 @@ Presentation = React.createClass({
         This is the presentation view
         <br/>
         <Link to="slide" params={{slideId: slideId}}>Edit</Link>
-        <Link to="presentation" params={{slideId: nextId}}>Next</Link>
-        <Link to="presentation" params={{slideId: prevId}}>Previous</Link>
+        <div>
+          <Link className="slide-link" to="presentation" params={{slideId: prevId}}>Previous</Link>
+          <Link className="slide-link" to="presentation" params={{slideId: nextId}}>Next</Link>
+        </div>
         <div>
           <svg ref="svg" width="800" height="600"></svg>
         </div>
