@@ -1,7 +1,7 @@
 {
-  "name": "d3-slide-maker",
+  "name": "react-slide-show",
   "version": "0.0.0",
-  "description": "make slides in d3",
+  "description": "make slides in react, show 'em with d3",
   "main": "lib/app.js",
   "scripts": {
     "bundle": "browserify --debug lib/app.js > build/bundle.js",
