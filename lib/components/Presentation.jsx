@@ -13,7 +13,7 @@ export default React.createClass({
   mixins: [State],
 
   getSlide() {
-    return Slides.getContent(this.getParams().slideId).toJS();
+    return Slides.getContent(this.getParams().slideNo).toJS();
   },
   componentDidMount() {
     var svg = d3.select(this.refs.svg.getDOMNode());
@@ -38,17 +38,17 @@ export default React.createClass({
        .attr(rHelper.attrsForTransition)
   },
   render() {
-    var slideId = parseInt(this.getParams().slideId),
-    nextId = slideId + 1,
-    prevId = slideId - 1;
+    var slideNo = parseInt(this.getParams().slideNo),
+    nextId = slideNo + 1,
+    prevId = slideNo - 1;
     return (
       <div>
         This is the presentation view
         <br/>
-        <Link to="slide" params={{slideId: slideId}}>Edit</Link>
+        <Link to="slide" params={{slideNo: slideNo}}>Edit</Link>
         <div>
-          <Link className="slide-link" to="presentation" params={{slideId: prevId}}>Previous</Link>
-          <Link className="slide-link" to="presentation" params={{slideId: nextId}}>Next</Link>
+          <Link className="slide-link" to="presentation" params={{slideNo: prevId}}>Previous</Link>
+          <Link className="slide-link" to="presentation" params={{slideNo: nextId}}>Next</Link>
         </div>
         <div>
           <svg ref="svg" width="800" height="600"></svg>
