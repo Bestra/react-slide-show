@@ -8,4 +8,4 @@ var e =  {
 }
 
 window.ComponentRegistry = e;
-module.exports = e;
+export default e;

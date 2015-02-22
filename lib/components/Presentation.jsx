@@ -1,13 +1,15 @@
 'use strict';
 
-var React = require('react'),
-rHelper = require('../d3-helpers/rect'),
-{ Link, State } = require('react-router'),
-d3 = require('d3'),
-Components = require('../components/Components.jsx'),
-Slides = require('../slide-store'),
+import React from 'react';
+import rHelper from '../d3-helpers/rect';
+import { Link, State } from 'react-router';
+import d3 from 'd3';
+import Components from '../components/Components.jsx';
+import Slides from '../slide-store';
 
-Presentation = React.createClass({
+window.d3 = d3; // for console convenience
+
+export default React.createClass({
   mixins: [State],
 
   getSlide() {
@@ -55,6 +57,3 @@ Presentation = React.createClass({
     );
   }
 });
-
-window.d3 = d3; // for console convenience
-module.exports = Presentation;

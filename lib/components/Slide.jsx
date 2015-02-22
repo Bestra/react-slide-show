@@ -1,12 +1,14 @@
 'use strict';
 
-var React = require('react'),
-Factory = require('../factory'),
-Components = require('../components/Components.jsx'),
-{ State, Link } = require('react-router'),
-Slides = require('../slide-store'),
-nodeId = 1,
-Slide = React.createClass({
+import Factory from '../factory';
+import React from 'react';
+import Components from '../components/Components.jsx';
+import { State, Link } from 'react-router';
+import Slides from '../slide-store';
+
+var idCount = 1;
+
+export default React.createClass({
   mixins: [State],
 
   getSlide() {
@@ -18,7 +20,10 @@ Slide = React.createClass({
   },
 
   getInitialState() {
-    return {nodes: this.getSlide(), handleClick: this.addRectangle};
+    return {nodes: this.getSlide(),
+            handleClick: this.addRectangle,
+            clickAction: "select",
+            selectedItem: null};
   },
 
   componentWillReceiveProps(props) {
@@ -29,10 +34,10 @@ Slide = React.createClass({
     var svgRect = this.refs.svg
                            .getDOMNode()
                            .getBoundingClientRect();
-    nodeId = nodeId + 1;
+    idCount = idCount + 1;
 
     var newRect = Factory.create('Rectangle', {
-      key: "rect-" + nodeId,
+      nodeId: "rect-" + idCount,
       x: evt.pageX - svgRect.left,
       y: evt.pageY - svgRect.top,
     });
@@ -62,7 +67,8 @@ Slide = React.createClass({
     prevId = slideId - 1;
 
     var childNodes = this.state.nodes.map(node => {
-      var nodeProps = node.get('props').merge({handleClick: this.state.handleClick});
+      var nodeProps = node.get('props').merge({clickAction: this.state.clickAction,
+                                               key: node.getIn(['props', 'nodeId'])});
       return React.createElement(ComponentRegistry[node.get('factoryName')],
                                  nodeProps.toJS(),
                                  node.get('children').toJS());
@@ -93,5 +99,3 @@ Slide = React.createClass({
     );
   }
 });
-
-module.exports = Slide;

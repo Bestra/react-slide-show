@@ -1,13 +1,16 @@
 'use strict';
 
-var React = require('react');
+import React from 'react';
 
-var Rectangle = React.createClass({
-
+export default React.createClass({
+  handleClick(e) {
+    e.stopPropagation();
+    this[this.props.clickAction](e);
+  },
+  select() {
+  },
   render() {
-    return <rect {...this.props} onClick={this.props.handleClick} />
+    return <rect {...this.props} onClick={this.handleClick} />
   },
 
 });
-
-module.exports = Rectangle;

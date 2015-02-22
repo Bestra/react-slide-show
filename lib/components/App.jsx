@@ -1,11 +1,9 @@
 'use strict';
 
-var React = require('react'),
-  RouteHandler = require('react-router').RouteHandler,
-  App;
+import React from 'react';
+import { RouteHandler } from 'react-router';
 
-
-App = React.createClass({
+export default React.createClass({
   render: function() {
     return (
       <div>
@@ -14,5 +12,3 @@ App = React.createClass({
     );
   }
 });
-
-module.exports = App;
