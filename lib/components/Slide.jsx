@@ -94,21 +94,20 @@ export default React.createClass({
 
     return (
       <div>
-      This is the Edit view
-      <br/>
-      <Link to="presentation" params={{slideNo: slideNo}}>See Presentation </Link>
-      <div>
-        <Link className="slide-link" to="slide" params={{slideNo: prevId}}>Previous</Link>
-        <Link className="slide-link" to="slide" params={{slideNo: nextId}}>Next</Link>
-        <button onClick={this.setActiveFn("addRectangle")}>Add Rectangle</button>
-        <button onClick={this.setActiveFn("move")}>Move</button>
-        <button onClick={this.setActiveFn("select")}>Select</button>
-        <input value={this.state.inputVal} onChange={this.multiBoxChange} placeholder={inputPrompt}/>
-
-      </div>
-      <div>
-        <svg ref="svg" onClick={this.state.handleClick} width="800" height="600">{childNodes}</svg>
-      </div>
+        This is the Edit view
+        <br/>
+        <Link to="presentation" params={{slideNo: slideNo}}>See Presentation </Link>
+        <div>
+          <Link className="slide-link" to="slide" params={{slideNo: prevId}}>Previous</Link>
+          <Link className="slide-link" to="slide" params={{slideNo: nextId}}>Next</Link>
+          <button onClick={this.setActiveFn("addRectangle")}>Add Rectangle</button>
+          <button onClick={this.setActiveFn("move")}>Move</button>
+          <button onClick={this.setActiveFn("select")}>Select</button>
+          <input value={this.state.inputVal} onChange={this.multiBoxChange} placeholder={inputPrompt}/>
+        </div>
+        <div>
+          <svg ref="svg" onClick={this.state.handleClick} width="800" height="600">{childNodes}</svg>
+        </div>
       </div>
     );
   }

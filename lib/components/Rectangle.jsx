@@ -1,36 +1,50 @@
 'use strict';
 
-import React from 'react';
+import React from 'react/addons';
 import { itemSelected, itemUpdated } from '../actions';
+import ResizeHandle from "./ResizeHandle.jsx";
 
 export default React.createClass({
   getInitialState() {
-    return {moving: false};
+    var { x, y, width, height } = this.props;
+    return {moving: false, x, y, width, height};
   },
   select() {
     itemSelected(this.props.itemId);
+  },
+  propsUpdated(newProps) {
+    itemUpdated(this.props.slideNo, this.props.itemId, {props: newProps});
   },
   moveStart(e) {
     e.preventDefault();
     e.stopPropagation();
     var initialPosition = this.getDOMNode().getBoundingClientRect(),
-    { pageX, pageY } = e,
-    { x, y } = this.props;
-    this.setState({moving: true, x, y, pageX, pageY});
+    { pageX, pageY } = e;
+    this.setState({moving: true, pageX, pageY});
   },
   move(e) {
     e.preventDefault();
     e.stopPropagation();
     if (!this.state.moving) return;
-    var newX = (e.pageX - this.state.pageX) + this.state.x,
-    newY = (e.pageY - this.state.pageY) + this.state.y;
+    var newX = (e.pageX - this.state.pageX) + this.props.x,
+    newY = (e.pageY - this.state.pageY) + this.props.y;
 
-    itemUpdated(this.props.slideNo, this.props.itemId, {props: {x: newX, y: newY}});
+    this.setState({x: newX, y: newY});
   },
   moveEnd(e) {
-    this.setState({moving: false});
     e.preventDefault();
     e.stopPropagation();
+    this.setState({moving: false});
+    this.propsUpdated({x: this.state.x,
+                       y: this.state.y});
+  },
+  onResize(dX, dY, memo) {
+    this.setState({width: memo.width + dX,
+                  height: memo.height + dY});
+  },
+  onResizeDone() {
+    this.propsUpdated({width: this.state.width,
+                       height: this.state.height});
   },
   render() {
     var handlerMap = {select: {onClick: this.select},
@@ -40,7 +54,27 @@ export default React.createClass({
     }[this.props.clickAction];
     var isSelected = this.props.selection.indexOf(this.props.itemId) > -1;
     var dash = isSelected ? "5, 5" : null ;
-    return <rect {...this.props} {...handlerMap} strokeDasharray={dash}/>
+    var { x, y, width, height } = this.state;
+    var { fill, stroke, strokeWidth } = this.props;
+    var c = <ResizeHandle x={x + width}
+                          y={y + height}
+                          memo={{width, height}}
+                          onMove={this.onResize}
+                          onMoveEnd={this.onResizeDone}/>;
+    return(
+      <g>
+      <rect x={x}
+            y={y}
+            width={width}
+            height={height}
+            strokeDasharray={dash}
+            fill={fill}
+            stroke={stroke}
+            strokeWidth={strokeWidth}
+            {...handlerMap}/>
+      {isSelected ? c : null}
+      </g>
+    );
   },
 
 });
