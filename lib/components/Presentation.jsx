@@ -12,30 +12,54 @@ window.d3 = d3; // for console convenience
 export default React.createClass({
   mixins: [State],
 
-  getSlide() {
-    return Slides.getContent(this.getParams().slideNo).toJS();
+  getSlideItems(type) {
+    return Slides.getContent(this.getParams().slideNo)
+    .filter(s => s.get('elementName') == type).toJS();
   },
   componentDidMount() {
     var svg = d3.select(this.refs.svg.getDOMNode());
     svg.selectAll("rect")
-       .data(this.getSlide())
+       .data(this.getSlideItems('rect'))
        .enter()
        .append("rect")
-       .attr(rHelper.attrsForAppend)
+       .attr(rHelper.attrsForAppend);
+    svg.selectAll("text")
+       .data(this.getSlideItems('text'))
+       .enter()
+       .append("text")
+       .attr({x: (d => d.props.x),
+             y: (d => d.props.y)})
+       .text(d => d.props.text);
   },
   componentWillReceiveProps() {
-    var sel = d3.select(this.refs.svg.getDOMNode())
+    var rects = d3.select(this.refs.svg.getDOMNode())
                 .selectAll("rect")
-                .data(this.getSlide());
+                .data(this.getSlideItems('rect'));
 
-    sel.exit().transition().style('opacity', 0.001).remove();
+    rects.exit().transition().style('opacity', 0.001).remove();
 
-    sel.enter()
+    rects.enter()
        .append("rect")
        .attr(rHelper.attrsForAppend)
 
-    sel.transition()
+    rects.transition()
        .attr(rHelper.attrsForTransition)
+
+    var texts = d3.select(this.refs.svg.getDOMNode())
+                .selectAll("text")
+                .data(this.getSlideItems('text'));
+
+    texts.exit().transition().style('opacity', 0.001).remove();
+
+    texts.enter()
+      .append("text")
+      .attr('x', d => d.props.x)
+      .attr('y', d => d.props.y)
+      .text(d => d.props.text);
+
+    texts.transition()
+      .attr('x', d => d.props.x)
+      .attr('y', d => d.props.y);
   },
   render() {
     var slideNo = parseInt(this.getParams().slideNo),

@@ -5,6 +5,7 @@ import React from 'react';
 import Components from '../components/Components.jsx';
 import { State, Link } from 'react-router';
 import slideStore from '../slide-store';
+import { itemCreated, itemSelected } from '../actions';
 
 var idCount = 1;
 
@@ -12,11 +13,7 @@ export default React.createClass({
   mixins: [State],
 
   getSlide() {
-    return slideStore.getContent(this.getParams().slideNo);
-  },
-
-  updateSlide(content) {
-    return slideStore.setContent(this.getParams().slideNo, content);
+    return slideStore.getContent(parseInt(this.getParams().slideNo));
   },
 
   getInitialState() {
@@ -42,25 +39,49 @@ export default React.createClass({
     this.setState({nodes: this.getSlide(), selection: slideStore.getSelection()});
   },
 
-  addRectangle(evt) {
+  svgCoordinates(evt) {
     var svgRect = this.refs.svg
                            .getDOMNode()
                            .getBoundingClientRect();
+
+     return {x: evt.pageX - svgRect.left,
+             y: evt.pageY - svgRect.top};
+
+  },
+
+  addRectangle(evt) {
     idCount = idCount + 1;
-    var slideNo = parseInt(this.getParams().slideNo);
-    var newRect = Factory.create('Rectangle', {
-        slideNo: slideNo,
-        itemId: "rect-" + idCount,
-        x: evt.pageX - svgRect.left,
-        y: evt.pageY - svgRect.top
-      });
+    var slideNo = parseInt(this.getParams().slideNo),
+    { x, y } = this.svgCoordinates(evt),
+    newRect = Factory.create('Rectangle', {
+      itemId: "rect-" + idCount,
+      x,
+      y,
+      slideNo
+    });
 
-    var newContent = this.updateSlide(this.getSlide().push(newRect));
+    itemCreated(slideNo, newRect);
+  },
 
-    this.setState({nodes: newContent});
+  addText(evt) {
+    idCount = idCount + 1;
+    var slideNo = parseInt(this.getParams().slideNo),
+    { x, y } = this.svgCoordinates(evt),
+    newText = Factory.create('Text', {
+      itemId: "text-" + idCount,
+      x,
+      y,
+      slideNo
+    });
+
+    itemCreated(slideNo, newText);
   },
 
   setKey(evt) {
+  },
+
+  select() {
+    itemSelected([null]);
   },
 
   setActiveFn(fnName) {
@@ -76,21 +97,26 @@ export default React.createClass({
   render() {
     var slideNo = parseInt(this.getParams().slideNo),
     nextId = slideNo + 1,
-    prevId = slideNo - 1;
+    prevId = slideNo - 1,
 
-    var { clickAction, selection } = this.state;
-    var childNodes = this.state.nodes.map((node) => {
-      var nodeProps = node.get('props').merge({clickAction: clickAction,
-                                               key: node.getIn(['props', 'itemId']),
-                                               selection: selection});
+    { clickAction, selection } = this.state,
+    childNodes = this.state.nodes.map((node) => {
+      var itemId = node.getIn(['props', 'itemId']),
+      isSelected = selection.has(itemId),
+      nodeProps = node.get('props').merge({clickAction: clickAction,
+                                           key: itemId,
+                                           isSelected: isSelected});
       return React.createElement(ComponentRegistry[node.get('factoryName')],
-                                 nodeProps.toJS(),
+                                 nodeProps.toObject(),
                                  node.get('children').toJS());
     }).toArray();
 
-    var inputPrompt = {addRectangle: "Click to make a rect",
-                       setKey: "Click to set a key"}[this.state.clickAction]
-                       || "MultiBox";
+    var inputPrompt = {
+      addRectangle: "Click to make a rect",
+      setKey: "Click to set a key",
+      select: "Pick something",
+      addText: "Click to add text"
+    }[this.state.clickAction] || "MultiBox";
 
     return (
       <div>
@@ -101,9 +127,11 @@ export default React.createClass({
           <Link className="slide-link" to="slide" params={{slideNo: prevId}}>Previous</Link>
           <Link className="slide-link" to="slide" params={{slideNo: nextId}}>Next</Link>
           <button onClick={this.setActiveFn("addRectangle")}>Add Rectangle</button>
+          <button onClick={this.setActiveFn("addText")}>Add Text</button>
+          <button onClick={this.setActiveFn("editText")}>Edit Text</button>
           <button onClick={this.setActiveFn("move")}>Move</button>
           <button onClick={this.setActiveFn("select")}>Select</button>
-          <input value={this.state.inputVal} onChange={this.multiBoxChange} placeholder={inputPrompt}/>
+          <input value={this.state.inputVal} onChange={this.state.onMultiBoxChange} placeholder={inputPrompt}/>
         </div>
         <div>
           <svg ref="svg" onClick={this.state.handleClick} width="800" height="600">{childNodes}</svg>

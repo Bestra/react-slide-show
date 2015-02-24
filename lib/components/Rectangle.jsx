@@ -9,7 +9,9 @@ export default React.createClass({
     var { x, y, width, height } = this.props;
     return {moving: false, x, y, width, height};
   },
-  select() {
+  select(e) {
+    e.preventDefault();
+    e.stopPropagation();
     itemSelected(this.props.itemId);
   },
   propsUpdated(newProps) {
@@ -52,8 +54,7 @@ export default React.createClass({
                              onMouseMove: this.move,
                              onMouseUp: this.moveEnd}
     }[this.props.clickAction];
-    var isSelected = this.props.selection.indexOf(this.props.itemId) > -1;
-    var dash = isSelected ? "5, 5" : null ;
+    var dash = this.props.isSelected ? "5, 5" : null ;
     var { x, y, width, height } = this.state;
     var { fill, stroke, strokeWidth } = this.props;
     var c = <ResizeHandle x={x + width}
@@ -72,7 +73,7 @@ export default React.createClass({
             stroke={stroke}
             strokeWidth={strokeWidth}
             {...handlerMap}/>
-      {isSelected ? c : null}
+      {this.props.isSelected ? c : null}
       </g>
     );
   },
