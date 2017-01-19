@@ -1,7 +1,8 @@
 'use strict';
 
 import React from 'react/addons';
-import { itemUpdated } from '../actions';
+import Actions from '../actions';
+let { itemUpdated, itemSelected } = Actions;
 
 export default React.createClass({
   getInitialState() {

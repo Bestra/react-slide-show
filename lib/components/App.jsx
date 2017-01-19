@@ -3,7 +3,7 @@
 import React from 'react';
 import { RouteHandler } from 'react-router';
 
-export default React.createClass({
+let foo =  React.createClass({
   render: function() {
     return (
       <div>
@@ -12,3 +12,4 @@ export default React.createClass({
     );
   }
 });
+export default foo

@@ -1,7 +1,8 @@
 'use strict';
 
 import React from 'react/addons';
-import { itemSelected, itemUpdated } from '../actions';
+import Actions from '../actions';
+let { itemUpdated, itemSelected } = Actions;
 import ResizeHandle from "./ResizeHandle.jsx";
 
 export default React.createClass({

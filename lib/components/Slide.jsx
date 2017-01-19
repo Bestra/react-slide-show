@@ -5,7 +5,8 @@ import React from 'react';
 import Components from '../components/Components.jsx';
 import { State, Link } from 'react-router';
 import slideStore from '../slide-store';
-import { itemCreated, itemSelected } from '../actions';
+import Actions from '../actions';
+let { itemCreated, itemSelected } = Actions;
 
 var idCount = 1;
 
