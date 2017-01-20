@@ -103,7 +103,7 @@ export default React.createClass({
     { clickAction, selection } = this.state,
     childNodes = this.state.nodes.map((node) => {
       var itemId = node.getIn(['props', 'itemId']),
-      isSelected = selection.has(itemId),
+      isSelected = selection.includes(itemId),
       nodeProps = node.get('props').merge({clickAction: clickAction,
                                            key: itemId,
                                            isSelected: isSelected});

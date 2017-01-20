@@ -2,6 +2,7 @@
 
 import React from 'react';
 import rHelper from '../d3-helpers/rect';
+let {attrsForAppend, attrsForTransition} = rHelper;
 import { Link, State } from 'react-router';
 import d3 from 'd3';
 import Components from '../components/Components.jsx';
@@ -13,8 +14,9 @@ export default React.createClass({
   mixins: [State],
 
   getSlideItems(type) {
-    return Slides.getContent(this.getParams().slideNo)
-    .filter(s => s.get('elementName') == type).toJS();
+    let slides = Slides.getContent(this.getParams().slideNo)
+    .filter(s => s.get('elementName') == type)
+    return Object.values(slides.toJS());
   },
   componentDidMount() {
     var svg = d3.select(this.refs.svg.getDOMNode());
@@ -22,7 +24,7 @@ export default React.createClass({
        .data(this.getSlideItems('rect'))
        .enter()
        .append("rect")
-       .attr(rHelper.attrsForAppend);
+       .attr(attrsForAppend);
     svg.selectAll("text")
        .data(this.getSlideItems('text'))
        .enter()
@@ -40,10 +42,10 @@ export default React.createClass({
 
     rects.enter()
        .append("rect")
-       .attr(rHelper.attrsForAppend)
+       .attr(attrsForAppend)
 
     rects.transition()
-       .attr(rHelper.attrsForTransition)
+       .attr(attrsForTransition)
 
     var texts = d3.select(this.refs.svg.getDOMNode())
                 .selectAll("text")
